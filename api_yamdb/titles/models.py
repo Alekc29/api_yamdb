@@ -41,7 +41,7 @@ class Genre(models.Model):
         ordering = ['name']
 
 
-class Titles(models.Model):
+class Title(models.Model):
     name = models.CharField(
         verbose_name='Название',
         max_length=256
@@ -81,7 +81,7 @@ class Titles(models.Model):
 
 class GenreTitle(models.Model):
     title_id = models.ForeignKey(
-        Titles,
+        Title,
         verbose_name='Произведение',
         on_delete=models.CASCADE
     )
