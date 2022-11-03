@@ -1,8 +1,19 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+CHOICES = ('admin', 'moderator', 'user',)
+
 
 class User(AbstractUser):
+    username = models.CharField(
+        'Ник',
+        max_length=150,
+        unique=True,
+    )
+    email = models.EmailField(
+        'эл. почта',
+        unique=True
+    )
     first_name = models.CharField(
         'Имя',
         max_length=150,
@@ -15,7 +26,12 @@ class User(AbstractUser):
         'Биография',
         blank=True,
     )
-    role = models.SlugField(
+    role = models.CharField(
+        'Статус',
+        max_length=10,
+        #choices=CHOICES,
         default='user',
-        unique=True,
     )
+    
+    def __str__(self):
+        return self.username
