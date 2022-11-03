@@ -1,16 +1,19 @@
 from rest_framework import viewsets
+# from rest_framework.permissions import IsAdminOrReadOnly
 
 from titles.models import Category, Genre #, Comment, Genre, Review, Title
 from .serializers import CategorySerializer, GenreSerializer
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryGenreViewSet(viewsets.ModelViewSet):
+    # permission_classes = (IsAdminOrReadOnly,)
+    search_fields = ('name',) 
+
+class CategoryViewSet(CategoryGenreViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    # permission_classes = (IsAdminOrReadOnly,)
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(CategoryGenreViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    # permission_classes = (IsAdminOrReadOnly,)
