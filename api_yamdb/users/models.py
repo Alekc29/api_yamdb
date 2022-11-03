@@ -1,7 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-CHOICES = ('admin', 'moderator', 'user',)
+ENUM = [('admin', 'admin'),
+        ('moderator', 'moderator'),
+        ('user', 'user')]
 
 
 class User(AbstractUser):
@@ -29,7 +31,7 @@ class User(AbstractUser):
     role = models.CharField(
         'Статус',
         max_length=10,
-        #choices=CHOICES,
+        choices=ENUM,
         default='user',
     )
     
