@@ -2,21 +2,12 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from users.models import User
-<<<<<<< HEAD
-=======
-
 from .permissions import IsAdminOrReadOnly
 from titles.models import Category, Comment, Genre, Review, Title
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleSerializer, UserSerializer)
->>>>>>> master
 
-from .permissions import IsAdminOrReadOnly
-from titles.models import Category, Comment, Genre, Review, Title
-from .serializers import (CategorySerializer, CommentSerializer,
-                          GenreSerializer, ReviewSerializer,
-                          TitleSerializer, UserSerializer)
 
 class CategoryGenreViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
