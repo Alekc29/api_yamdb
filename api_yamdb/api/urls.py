@@ -14,3 +14,4 @@ router.register('users', UserViewSet, basename='users')
 urlpatterns = [
     path('v1/', include(router.urls)),
     path('v1/', include(router.urls), name='api-root'),
+]

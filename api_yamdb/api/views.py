@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 # from rest_framework.permissions import IsAdminOrReadOnly
 
 from users.models import User
-from .permissions import IsAdminOnlyPermission
+# from .permissions import IsAdminOnlyPermission
 from titles.models import Category, Genre, Title #, Comment, Review
 from .serializers import CategorySerializer, GenreSerializer, TitleSerializer, UserSerializer
 
