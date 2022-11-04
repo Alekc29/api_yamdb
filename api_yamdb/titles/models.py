@@ -104,7 +104,7 @@ class Review(models.Model):
     text = models.CharField(
         max_length=200
     )
-    atuhor = models.ForeignKey(
+    author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='reviews',
