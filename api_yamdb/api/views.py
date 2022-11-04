@@ -4,8 +4,9 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 from users.models import User
 # from .permissions import IsAdminOnlyPermission
-from titles.models import Category, Genre, Title #, Comment, Review
-from .serializers import CategorySerializer, GenreSerializer, TitleSerializer, UserSerializer
+from titles.models import Category, Genre, Title, Comment, Review
+from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
+                          UserSerializer, ReviewSerializer, CommentSerializer)
 
 
 class CategoryGenreViewSet(viewsets.ModelViewSet):
@@ -25,6 +26,16 @@ class GenreViewSet(CategoryGenreViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
