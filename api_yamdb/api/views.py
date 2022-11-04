@@ -1,13 +1,18 @@
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.pagination import LimitOffsetPagination
+
 
 from users.models import User
 from .permissions import IsAdminOrReadOnly, IsAdminOnly
 from titles.models import Category, Comment, Genre, Review, Title
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
-                          TitleSerializer, UserSerializer)
+                          TitleSerializer, UserSerializer,
+                          NotAdminSerializer)
 
 
 class CategoryGenreViewSet(viewsets.ModelViewSet):
@@ -43,10 +48,33 @@ class CommentViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminOnly,)
+    permission_classes = (IsAdminOnly, IsAuthenticated,)
+    lookup_field = 'username'
+    filter_backends = (SearchFilter,)
+    search_fields = ('username',)
     pagination_class = LimitOffsetPagination
 
-    def perform_create(self, serializer):
-        serializer.save()
+    @action(
+        methods=['GET', 'PATCH'],
+        detail=False,
+        permission_classes=(IsAuthenticated,),
+        url_path='me')
+    def get_current_user_info(self, request):
+        serializer = UserSerializer(request.user)
+        if request.method == 'PATCH':
+            if request.user.is_admin:
+                serializer = UserSerializer(
+                    request.user,
+                    data=request.data,
+                    partial=True)
+            else:
+                serializer = NotAdminSerializer(
+                    request.user,
+                    data=request.data,
+                    partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data)
 
-    
+   
