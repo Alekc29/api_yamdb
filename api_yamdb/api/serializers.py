@@ -62,12 +62,6 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    
-
-    def validate_username(self, username):
-        if username == 'me':
-            raise serializers.ValidationError('Использовать "me" нельзя.')
-        return username
 
     class Meta:
         fields = ('username',
@@ -76,4 +70,17 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'bio',
                   'role')
+        model = User
+
+
+class NotAdminSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('username',
+                  'email',
+                  'first_name',
+                  'last_name',
+                  'bio',
+                  'role')
+        read_only_fields = ('role',)
         model = User
