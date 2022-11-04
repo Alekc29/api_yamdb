@@ -3,16 +3,19 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
 
 from users.models import User
+from .mixins import CreateDestroyListViewSet
 from .permissions import IsAdminOrReadOnly, IsAdminOnly
 from titles.models import Category, Comment, Genre, Review, Title
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
-                          TitleSerializer, UserSerializer)
+                          TitleSerializer, TitleForAdminSerializer,
+                           UserSerializer)
 
 
-class CategoryGenreViewSet(viewsets.ModelViewSet):
+class CategoryGenreViewSet(CreateDestroyListViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     search_fields = ('name',) 
+
 
 class CategoryViewSet(CategoryGenreViewSet):
     queryset = Category.objects.all()
@@ -29,6 +32,10 @@ class TitleViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
 
+    def get_serializer_class(self):
+        if self.action in ('retrieve', 'list'):
+            return TitleSerializer
+        return TitleForAdminSerializer
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
