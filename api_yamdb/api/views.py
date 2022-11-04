@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
@@ -19,6 +20,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
 class CategoryGenreViewSet(CreateDestroyListViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     search_fields = ('name',) 
+    lookup_field = 'slug'
 
 
 class CategoryViewSet(CategoryGenreViewSet):
@@ -35,6 +37,9 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('name', 'year', 'category__slug', 'genre__slug') 
+
 
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list'):
