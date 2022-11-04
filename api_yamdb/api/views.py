@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
 
 from users.models import User
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrSuperuserOrReadOnly
 from titles.models import Category, Comment, Genre, Review, Title
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
@@ -11,8 +11,9 @@ from .serializers import (CategorySerializer, CommentSerializer,
 
 
 class CategoryGenreViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAdminOrReadOnly,)
-    search_fields = ('name',) 
+    permission_classes = (IsAdminOrSuperuserOrReadOnly,)
+    search_fields = ('name',)
+    
 
 class CategoryViewSet(CategoryGenreViewSet):
     queryset = Category.objects.all()
@@ -27,7 +28,7 @@ class GenreViewSet(CategoryGenreViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
-    permission_classes = (IsAdminOrReadOnly,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
