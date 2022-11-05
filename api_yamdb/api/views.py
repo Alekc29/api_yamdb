@@ -5,9 +5,9 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.pagination import LimitOffsetPagination
-
+from rest_framework.views import APIView
 
 from users.models import User
 from .filters import TitleFilter
@@ -121,10 +121,19 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-def signup(request):
-    '''Функция регистрации пользователей.'''
-    serializer = SignUpSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class SignupAPI(APIView):
+    """
+    Получить код подтверждения на переданный email. 
+    Права доступа: Доступно без токена. 
+    Использовать имя 'me' в качестве username запрещено.
+    Поля email и username должны быть уникальными.
+    """
+    serializer_class = SignUpSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        '''Функция регистрации пользователей.'''
+        serializer = SignUpSerializer(data=request.data)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
