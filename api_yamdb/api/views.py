@@ -15,7 +15,8 @@ from titles.models import Category, Comment, Genre, Review, Title
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleSerializer, TitleForAdminSerializer,
-                          UserSerializer, NotAdminSerializer)
+                          UserSerializer, NotAdminSerializer,
+                          SignUpSerializer)
 
 
 class CategoryGenreViewSet(CreateDestroyListViewSet):
@@ -85,7 +86,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAdminOnly, IsAuthenticated,)
+    permission_classes = (IsAdminOnly,)
     lookup_field = 'username'
     filter_backends = (SearchFilter,)
     search_fields = ('username',)
@@ -109,9 +110,17 @@ class UserViewSet(viewsets.ModelViewSet):
                     request.user,
                     data=request.data,
                     partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.data)
 
-   
+
+def signup(request):
+    '''Функция регистрации пользователей.'''
+    serializer = SignUpSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

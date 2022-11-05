@@ -100,3 +100,11 @@ class NotAdminSerializer(serializers.ModelSerializer):
                   'role')
         read_only_fields = ('role',)
         model = User
+
+
+class SignUpSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        fields = ('username',
+                  'email',)
+        model = User
