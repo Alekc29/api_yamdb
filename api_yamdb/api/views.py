@@ -1,3 +1,4 @@
+from django.core.mail import EmailMessage
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
@@ -132,8 +133,14 @@ class SignupAPI(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        '''Функция регистрации пользователей.'''
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
+            data = serializer.save()
+            email = EmailMessage(
+                'Код подтверждения для доступа к API:',
+                f'{data.confirmation_code}',
+                data.email
+            )
+            email.send()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
