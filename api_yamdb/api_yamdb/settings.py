@@ -128,14 +128,14 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-EMAIL_HOST = 'localhost'
+#   EMAIL_HOST = 'localhost'
 
-EMAIL_PORT = 1025
+#    EMAIL_PORT = 1025
 
-MAIL_HOST_USER = ''
+#    MAIL_HOST_USER = ''
 
-EMAIL_HOST_PASSWORD = ''
+#    EMAIL_HOST_PASSWORD = ''
 
-EMAIL_USE_TLS = False
+#    EMAIL_USE_TLS = False

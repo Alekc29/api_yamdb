@@ -14,6 +14,7 @@ class CustomUserAdmin(UserAdmin):
                   'first_name',
                   'last_name',
                   'bio',
-                  'role')
+                  'role',
+                  'confirmation_code')
 
 admin.site.register(User, CustomUserAdmin)

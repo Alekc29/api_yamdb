@@ -1,4 +1,6 @@
+from random import randint
 from django.core.mail import EmailMessage
+from django.contrib.auth import login
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
@@ -137,6 +139,8 @@ class SignupAPI(APIView):
         serializer = SignUpSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.save()
+            data.confirmation_code = randint(1000, 9999)
+            data = serializer.save()
             email = EmailMessage(
                 subject='Код подтверждения для доступа к API:',
                 body=f'{data.confirmation_code}',
@@ -158,7 +162,27 @@ class GetTokenAPI(APIView):
     def post(self, request):
         serializer = GetTokenSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            data = serializer.validated_data
+            try:
+                user = User.objects.get(username=data['username'])
+            except User.DoesNotExist:
+                return Response(
+                    {'username': 'Пользователь не найден!'},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            if data.get('confirmation_code') == user.confirmation_code:
+                token = RefreshToken.for_user(user).access_token
+                serializer.save
+                return Response(
+                    {'token': str(token)},
+                    status=status.HTTP_201_CREATED
+                )
+            return Response(
+                {'confirmation_code': 'Неверный код подтверждения!'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
         
