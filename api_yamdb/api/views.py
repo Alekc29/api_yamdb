@@ -14,7 +14,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from users.models import User
 from .filters import TitleFilter
 from .mixins import CreateDestroyListViewSet
-from .permissions import IsAdminOrReadOnly, IsAdminOnly
+from .permissions import IsAdminOrReadOnly, IsAdminOnly, AdminModeratorOrReadOnly
 from titles.models import Category, Comment, Genre, Review, Title
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
@@ -57,7 +57,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (AdminModeratorOrReadOnly,)
 
     def get_queryset(self):
         title = get_object_or_404(
@@ -74,7 +74,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (AdminModeratorOrReadOnly,)
 
     def get_queryset(self):
         review = get_object_or_404(
