@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
@@ -9,6 +10,7 @@ from rest_framework.pagination import LimitOffsetPagination
 
 
 from users.models import User
+from .filters import TitleFilter
 from .mixins import CreateDestroyListViewSet
 from .permissions import IsAdminOrReadOnly, IsAdminOnly
 from titles.models import Category, Comment, Genre, Review, Title
@@ -21,6 +23,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
 
 class CategoryGenreViewSet(CreateDestroyListViewSet):
     permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (SearchFilter,)
     search_fields = ('name',) 
     lookup_field = 'slug'
 
@@ -36,11 +39,12 @@ class GenreViewSet(CategoryGenreViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        Avg('reviews__score')).order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name', 'year', 'category__slug', 'genre__slug') 
+    filterset_class = TitleFilter
 
 
     def get_serializer_class(self):
