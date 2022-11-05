@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from users.models import User
 from .filters import TitleFilter
@@ -19,7 +20,7 @@ from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleSerializer, TitleForAdminSerializer,
                           UserSerializer, NotAdminSerializer,
-                          SignUpSerializer)
+                          SignUpSerializer, GetTokenSerializer)
 
 
 class CategoryGenreViewSet(CreateDestroyListViewSet):
@@ -137,10 +138,27 @@ class SignupAPI(APIView):
         if serializer.is_valid():
             data = serializer.save()
             email = EmailMessage(
-                'Код подтверждения для доступа к API:',
-                f'{data.confirmation_code}',
-                data.email
+                subject='Код подтверждения для доступа к API:',
+                body=f'{data.confirmation_code}',
+                to=[data.email,]
             )
             email.send()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetTokenAPI(APIView):
+    """
+    Получение JWT-токена в обмен на Ник и код подтверждения.
+    Права доступа: Доступно без токена.
+    """
+    serializer_class = GetTokenSerializer
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = GetTokenSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
