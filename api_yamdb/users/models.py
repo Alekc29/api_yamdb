@@ -52,10 +52,10 @@ class User(AbstractUser):
         default='XXXX'
     )
 
-    
     @property
     def is_user(self):
         return self.role == 'user'
+
     @property
     def is_admin(self):
         return self.role == 'admin'

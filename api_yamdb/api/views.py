@@ -1,34 +1,35 @@
 from random import randint
+
 from django.core.mail import EmailMessage
-from django.contrib.auth import login
-from django.shortcuts import get_object_or_404
 from django.db.models import Avg
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated, AllowAny
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from reviews.models import Category, Genre, Review, Title
 from users.models import User
+
 from .filters import TitleFilter
 from .mixins import CreateDestroyListViewSet
-from .permissions import IsAdminOrReadOnly, IsAdminOnly, AdminModeratorOrReadOnly
-from reviews.models import Category, Comment, Genre, Review, Title
+from .permissions import (AdminModeratorOrReadOnly, IsAdminOnly,
+                          IsAdminOrReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
-                          GenreSerializer, ReviewSerializer,
-                          TitleSerializer, TitleForAdminSerializer,
-                          UserSerializer, NotAdminSerializer,
-                          SignUpSerializer, GetTokenSerializer)
+                          GenreSerializer, GetTokenSerializer,
+                          NotAdminSerializer, ReviewSerializer,
+                          SignUpSerializer, TitleForAdminSerializer,
+                          TitleSerializer, UserSerializer)
 
 
 class CategoryGenreViewSet(CreateDestroyListViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (SearchFilter,)
-    search_fields = ('name',) 
+    search_fields = ('name',)
     lookup_field = 'slug'
 
 
@@ -49,7 +50,6 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitleFilter
-
 
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list'):
@@ -121,14 +121,16 @@ class UserViewSet(viewsets.ModelViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors, status=status.HTTP_400_BAD_REQUEST
+            )
         return Response(serializer.data)
 
 
 class SignupAPI(APIView):
     """
-    Получить код подтверждения на переданный email. 
-    Права доступа: Доступно без токена. 
+    Получить код подтверждения на переданный email.
+    Права доступа: Доступно без токена.
     Использовать имя 'me' в качестве username запрещено.
     Поля email и username должны быть уникальными.
     """
@@ -144,7 +146,7 @@ class SignupAPI(APIView):
             email = EmailMessage(
                 subject='Код подтверждения для доступа к API:',
                 body=f'{data.confirmation_code}',
-                to=[data.email,]
+                to=[data.email, ]
             )
             email.send()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -182,4 +184,3 @@ class GetTokenAPI(APIView):
             serializer.errors,
             status=status.HTTP_400_BAD_REQUEST
         )
-        
