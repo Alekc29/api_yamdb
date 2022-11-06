@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 
 from titles.models import Category, Comment, Genre, Review, Title
@@ -56,6 +58,20 @@ class ReviewSerializer(serializers.ModelSerializer):
         slug_field='username',
         read_only=True
     )
+
+    def validate_score(self, score):
+        if 0 > score > 10:
+            raise serializers.ValidationError('Оцените от 1 до 10')
+        return score
+
+    def validate(self, data):
+        request = self.context['request']
+        author = request.user
+        title_id = self.context['request'].kwargs.get('title_id')
+        title = get_object_or_404(Title, pk=title_id)
+        if Review.objects.filter(title=title, author=author).exists():
+            raise ValidationError('Вы уже оставили отзыв')
+        return data
 
     class Meta:
         model = Review
