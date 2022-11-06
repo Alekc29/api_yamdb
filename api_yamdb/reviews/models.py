@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
 
@@ -111,9 +112,9 @@ class Review(models.Model):
         related_name='reviews',
         verbose_name='автор'
     )
-    score = models.IntegerField(
-        'оценка'
-    )
+    score = models.SmallIntegerField(
+        'оценка',
+    validators=[MaxValueValidator(10),MinValueValidator(1)])
     pub_date = models.DateTimeField(
         'дата публикации',
         auto_now_add=True
