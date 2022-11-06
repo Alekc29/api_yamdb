@@ -17,7 +17,7 @@ from users.models import User
 from .filters import TitleFilter
 from .mixins import CreateDestroyListViewSet
 from .permissions import IsAdminOrReadOnly, IsAdminOnly, AdminModeratorOrReadOnly
-from titles.models import Category, Comment, Genre, Review, Title
+from reviews.models import Category, Comment, Genre, Review, Title
 from .serializers import (CategorySerializer, CommentSerializer,
                           GenreSerializer, ReviewSerializer,
                           TitleSerializer, TitleForAdminSerializer,

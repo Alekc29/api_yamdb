@@ -1,5 +1,5 @@
 import django_filters as filter
-from titles.models import Title
+from reviews.models import Title
 
 class TitleFilter(filter.FilterSet):
     name = filter.CharFilter(field_name='name', lookup_expr='icontains')
