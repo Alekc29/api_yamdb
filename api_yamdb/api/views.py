@@ -163,13 +163,10 @@ class GetTokenAPI(APIView):
         serializer = GetTokenSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
-            try:
-                user = User.objects.get(username=data['username'])
-            except User.DoesNotExist:
-                return Response(
-                    {'username': 'Пользователь не найден!'},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+            user = get_object_or_404(
+                User,
+                username=data['username']
+            )
             if data.get('confirmation_code') == user.confirmation_code:
                 token = RefreshToken.for_user(user).access_token
                 serializer.save
