@@ -7,9 +7,8 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 from reviews.models import Category, Genre, Review, Title
 from users.models import User
@@ -126,7 +125,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-@api_view(['POST',])
+@api_view(['POST', ])
 def post_signup(request):
     """
     Получить код подтверждения на переданный email.
@@ -149,7 +148,7 @@ def post_signup(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['POST',])
+@api_view(['POST', ])
 def post_get_token(request):
     """
     Получение JWT-токена в обмен на Ник и код подтверждения.

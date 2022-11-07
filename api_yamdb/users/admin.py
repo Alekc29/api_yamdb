@@ -16,6 +16,7 @@ class CustomUserAdmin(UserAdmin):
                     'bio',
                     'role',
                     'confirmation_code')
+    list_filter = ('role',)
 
 
 admin.site.register(User, CustomUserAdmin)

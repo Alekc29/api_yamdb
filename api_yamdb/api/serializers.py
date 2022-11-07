@@ -145,7 +145,7 @@ class SignUpSerializer(serializers.ModelSerializer):
                 params={'email': email},
             )
         return username, email
- 
+
     class Meta:
         fields = ('username',
                   'email',)
