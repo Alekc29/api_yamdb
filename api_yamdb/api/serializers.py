@@ -125,6 +125,27 @@ class NotAdminSerializer(serializers.ModelSerializer):
 
 class SignUpSerializer(serializers.ModelSerializer):
 
+    def validate_username_not_me(self, username):
+        if username == 'me':
+            raise serializers.ValidationError(
+                ('Ник не может быть <me>.'),
+                params={'user': username},
+            )
+        return username
+
+    def validate_unique_username_and_email(self, username, email):
+        if User.objects.count(username=username):
+            raise serializers.ValidationError(
+                ('К сожалению такой ник уже есть в базе.'),
+                params={'username': username},
+            )
+        if User.objects.count(email=email):
+            raise serializers.ValidationError(
+                ('К сожалению email уже использовался для регистрации.'),
+                params={'email': email},
+            )
+        return username, email
+ 
     class Meta:
         fields = ('username',
                   'email',)

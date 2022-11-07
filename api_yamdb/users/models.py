@@ -1,11 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .enumerates import ADMIN, ENUM, MODERATOR, USER
 from .validators import validate_username
-
-ENUM = [('admin', 'admin'),
-        ('moderator', 'moderator'),
-        ('user', 'user')]
 
 
 class User(AbstractUser):
@@ -39,9 +36,9 @@ class User(AbstractUser):
     )
     role = models.CharField(
         'Статус',
-        max_length=10,
+        max_length=25,
         choices=ENUM,
-        default='user',
+        default=USER,
         blank=True,
     )
     confirmation_code = models.CharField(
@@ -54,15 +51,15 @@ class User(AbstractUser):
 
     @property
     def is_user(self):
-        return self.role == 'user'
+        return self.role == USER
 
     @property
     def is_admin(self):
-        return self.role == 'admin'
+        return self.role == ADMIN
 
     @property
     def is_moderator(self):
-        return self.role == 'moderator'
+        return self.role == MODERATOR
 
     def __str__(self):
         return self.username
