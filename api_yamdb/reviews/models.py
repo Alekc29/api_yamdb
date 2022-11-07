@@ -15,13 +15,13 @@ class Category(models.Model):
         unique=True
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class Genre(models.Model):
@@ -35,13 +35,13 @@ class Genre(models.Model):
         unique=True
     )
 
-    def __str__(self):
-        return self.name
-
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
 
 
 class Title(models.Model):
@@ -93,7 +93,6 @@ class GenreTitle(models.Model):
         verbose_name='Жанр',
         on_delete=models.CASCADE
     )
-
 
 class Review(models.Model):
     title = models.ForeignKey(
