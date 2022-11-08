@@ -23,16 +23,15 @@ class GenreSerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     genre = GenreSerializer(many=True)
     category = CategorySerializer()
-    rating = serializers.SerializerMethodField()
+    rating = serializers.IntegerField(
+        source='reviews__score__avg', read_only=True
+    )
 
     class Meta:
         model = Title
         fields = (
             'id', 'name', 'year', 'rating', 'description', 'genre', 'category'
         )
-
-    def get_rating(self, obj):
-        return obj.reviews.aggregate(Avg('score')).get('score__avg')
 
 
 class TitleForAdminSerializer(serializers.ModelSerializer):
@@ -124,6 +123,27 @@ class NotAdminSerializer(serializers.ModelSerializer):
 
 
 class SignUpSerializer(serializers.ModelSerializer):
+
+    def validate_username_not_me(self, username):
+        if username == 'me':
+            raise serializers.ValidationError(
+                ('Ник не может быть <me>.'),
+                params={'user': username},
+            )
+        return username
+
+    def validate_unique_username_and_email(self, username, email):
+        if User.objects.count(username=username):
+            raise serializers.ValidationError(
+                ('К сожалению такой ник уже есть в базе.'),
+                params={'username': username},
+            )
+        if User.objects.count(email=email):
+            raise serializers.ValidationError(
+                ('К сожалению email уже использовался для регистрации.'),
+                params={'email': email},
+            )
+        return username, email
 
     class Meta:
         fields = ('username',
