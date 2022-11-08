@@ -42,7 +42,7 @@ class GenreViewSet(CategoryGenreViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all().annotate(
+    queryset = Title.objects.prefetch_related("category", "genre").annotate(
         Avg('reviews__score')).order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
