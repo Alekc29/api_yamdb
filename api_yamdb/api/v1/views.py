@@ -15,9 +15,8 @@ from .mixins import CreateDestroyListViewSet
 from .permissions import (AdminModeratorOrReadOnly, IsAdminOnly,
                           IsAdminOrReadOnly)
 from .serializers import (CategorySerializer, CommentSerializer,
-                          GenreSerializer, 
-                          NotAdminSerializer, ReviewSerializer,
-                          TitleForAdminSerializer,
+                          GenreSerializer, NotAdminSerializer,
+                          ReviewSerializer, TitleForAdminSerializer,
                           TitleSerializer, UserSerializer)
 
 
@@ -39,7 +38,9 @@ class GenreViewSet(CategoryGenreViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.prefetch_related("category", "genre").annotate(
+    queryset = Title.objects.select_related(
+        'category').prefetch_related(
+        'reviews', 'genre').annotate(
         Avg('reviews__score')).order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -60,7 +61,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
         title = get_object_or_404(
             Title,
             id=self.kwargs.get('title_id'))
-        return title.reviews.select_related('title', 'author').all()
+        return title.reviews.select_related('title', 'author')
 
     def perform_create(self, serializer):
         title = get_object_or_404(
@@ -77,7 +78,7 @@ class CommentViewSet(viewsets.ModelViewSet):
         review = get_object_or_404(
             Review,
             id=self.kwargs.get('review_id'))
-        return review.comments.select_related('review', 'author').all()
+        return review.comments.select_related('review', 'author')
 
     def perform_create(self, serializer):
         review = get_object_or_404(
