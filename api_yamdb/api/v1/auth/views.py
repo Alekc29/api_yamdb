@@ -10,6 +10,15 @@ from users.models import User
 from .serializers import GetTokenSerializer, SignUpSerializer
 
 
+def send_email(data):
+    email = EmailMessage(
+        subject='Код подтверждения для доступа к API:',
+        body=f'{data.confirmation_code}',
+        to=[data.email, ]
+    )
+    email.send()
+
+
 @api_view(['POST', ])
 def post_signup(request):
     """
@@ -19,16 +28,23 @@ def post_signup(request):
     Поля email и username должны быть уникальными.
     """
     serializer = SignUpSerializer(data=request.data)
+    if (
+        not isinstance(request.data, dict)
+        or request.data.get('username') is None
+        or request.data.get('email') is None
+    ):
+        serializer.is_valid()
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    username = request.data['username']
+    email = request.data['email']
+    if User.objects.filter(username=username, email=email).exists():
+        obj = User.objects.get(username=username)
+        send_email(obj)
     if serializer.is_valid():
         data = serializer.save()
         data.confirmation_code = default_token_generator
         data = serializer.save()
-        email = EmailMessage(
-            subject='Код подтверждения для доступа к API:',
-            body=f'{data.confirmation_code}',
-            to=[data.email, ]
-        )
-        email.send()
+        send_email(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
