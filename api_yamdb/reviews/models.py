@@ -66,7 +66,7 @@ class Title(models.Model):
     genre = models.ManyToManyField(
         Genre,
         verbose_name='Жанр',
-        related_name='genre'
+        related_name='titles'
     )
     rating = models.IntegerField(
         verbose_name='Рейтинг',
