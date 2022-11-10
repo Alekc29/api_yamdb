@@ -51,6 +51,7 @@ class Title(models.Model):
     )
     year = models.PositiveSmallIntegerField(
         verbose_name='Дата выхода',
+        db_index=True
     )
     description = models.TextField(
         verbose_name='Описание',
