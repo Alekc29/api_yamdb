@@ -37,12 +37,13 @@ def post_signup(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     username = request.data['username']
     email = request.data['email']
-    if User.objects.filter(username=username, email=email).exists():
-        obj = User.objects.get(username=username)
+    obj = User.objects.filter(username=username, email=email).first()
+    if obj is not None:
         send_email(obj)
+        return Response('Повторная отправка кода.', status=status.HTTP_200_OK)
     if serializer.is_valid():
         data = serializer.save()
-        data.confirmation_code = default_token_generator
+        data.confirmation_code = default_token_generator.make_token(data)
         data = serializer.save()
         send_email(data)
         return Response(serializer.data, status=status.HTTP_200_OK)
