@@ -1,6 +1,7 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import UniqueConstraint
+from django.template.defaultfilters import truncatechars
 from users.models import User
 
 
@@ -106,6 +107,11 @@ class Review(models.Model):
         'дата публикации',
         auto_now_add=True
     )
+
+    @property
+    def get_text(self):
+        return self.text[:30]
+    get_text.fget.short_description = 'Текст'
 
     class Meta:
         verbose_name = 'Отзыв'

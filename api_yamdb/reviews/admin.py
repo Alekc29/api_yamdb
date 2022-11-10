@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.template.defaultfilters import truncatechars
 
 from .models import Category, Comment, Genre, Review, Title
 
@@ -38,9 +39,12 @@ class GenreAdmin(admin.ModelAdmin):
 class ReviewAdmin(admin.ModelAdmin):
     list_display = (
         'title',
-        'text',
+        'get_text',
         'author',
         'score',
+    )
+    list_display_links = (
+        'get_text',
     )
     search_fields = ('pub_date',)
     list_filter = ('pub_date',)
