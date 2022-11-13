@@ -23,7 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'rest_framework_simplejwt',
+    'rest_framework_simplejwt',  # модуль аутентификации
     'django_filters',
     'api.apps.ApiConfig',
     'reviews.apps.ReviewsConfig',
@@ -124,7 +124,7 @@ REST_FRAMEWORK = {
     ),
 }
 
-
+# аутентификация 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),

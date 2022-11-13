@@ -111,7 +111,7 @@ class Review(models.Model):
     @property
     def get_text(self):
         return self.text[:30]
-    get_text.fget.short_description = 'Текст'
+    get_text.fget.short_description = 'Текст'# для админки для названия столбца
 
     class Meta:
         verbose_name = 'Отзыв'

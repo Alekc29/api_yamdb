@@ -4,7 +4,8 @@ from django.db import models
 from .enumerates import ADMIN, ENUM, MODERATOR, USER
 from .validators import validate_username
 
-
+# AbstractUser: username, password, email, там есть поля по умоланию, 
+# можно добавлять свои и переопределять другие поля
 class User(AbstractUser):
     username = models.CharField(
         'Ник',
@@ -48,7 +49,7 @@ class User(AbstractUser):
         blank=False,
         default='XXXX'
     )
-
+    # декоратор для добавления свойства - можно использовать везде, доступно через точку
     @property
     def is_user(self):
         return self.role == USER

@@ -98,9 +98,9 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(
         methods=['GET', 'PATCH'],
-        detail=False,
+        detail=False,   
         permission_classes=(IsAuthenticated,),
-        url_path='me')
+        url_path='me')  # дополнительный адресс
     def get_current_user_info(self, request):
         serializer = UserSerializer(request.user)
         if request.method == 'PATCH':

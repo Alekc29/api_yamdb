@@ -64,7 +64,7 @@ def post_get_token(request):
             username=data['username']
         )
         if data.get('confirmation_code') == user.confirmation_code:
-            token = RefreshToken.for_user(user).access_token
+            token = RefreshToken.for_user(user).access_token # отправка токена
             serializer.save
             return Response(
                 {'token': str(token)},
